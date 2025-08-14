@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!accessToken) return null;
       
       try {
-        const response = await fetch("https://api.neighborly.live/api/auth/me", {
+        const response = await fetch("https://api.neighborly.live/api/users/me", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",

@@ -102,7 +102,13 @@ export function ApplicationModal({ application, isOpen, onClose }: ApplicationMo
           <DialogHeader className="px-6 py-4 border-b border-border">
             <DialogTitle className="text-lg font-semibold text-foreground">Review Application</DialogTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              {application.full_name} • Submitted {format(new Date(application.created_at), "MMM dd, yyyy")}
+              {application.full_name} • Submitted {(() => {
+                try {
+                  return application.created_at ? format(new Date(application.created_at), "MMM dd, yyyy") : "Unknown date";
+                } catch {
+                  return "Unknown date";
+                }
+              })()}
             </p>
           </DialogHeader>
 
