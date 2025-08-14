@@ -339,15 +339,13 @@ export function ApplicationModal({ application, isOpen, onClose }: ApplicationMo
           </div>
 
           {/* Action Buttons */}
-          <div className="px-6 py-4 border-t border-notion-border bg-notion-gray-light" style={{ position: 'relative', zIndex: 10 }}>
+          <div className="px-6 py-4 border-t border-notion-border bg-notion-gray-light">
             <div className="flex flex-col sm:flex-row gap-3">
-              
               <Button
                 className="flex-1 bg-notion-black text-white hover:bg-notion-text-muted shadow-sm transition-colors duration-200"
                 onClick={handleApprove}
                 disabled={application.status !== "pending" || approveMutation.isPending || rejectMutation.isPending}
                 data-testid="button-approve"
-                style={{ position: 'relative', zIndex: 20 }}
               >
                 {approveMutation.isPending ? (
                   <div className="flex items-center space-x-2">
@@ -367,7 +365,6 @@ export function ApplicationModal({ application, isOpen, onClose }: ApplicationMo
                 onClick={handleReject}
                 disabled={application.status !== "pending" || approveMutation.isPending || rejectMutation.isPending}
                 data-testid="button-reject"
-                style={{ position: 'relative', zIndex: 20 }}
               >
                 {rejectMutation.isPending ? (
                   <div className="flex items-center space-x-2">

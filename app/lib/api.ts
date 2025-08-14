@@ -15,10 +15,6 @@ async function makeRequest<T>(
 ): Promise<T> {
   const accessToken = localStorage.getItem("accessToken");
   
-  console.log(`Making API request to: ${BASE_URL}${endpoint}`);
-  console.log("Request options:", options);
-  console.log("Access token:", accessToken ? "Present" : "Missing");
-  
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
     headers: {
@@ -27,9 +23,6 @@ async function makeRequest<T>(
       ...options.headers,
     },
   });
-
-  console.log("Response status:", response.status);
-  console.log("Response headers:", Object.fromEntries(response.headers.entries()));
 
   if (!response.ok) {
     let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
@@ -45,19 +38,10 @@ async function makeRequest<T>(
       // If we can't parse the error response, use the default message
     }
     
-    console.error("API request failed:", {
-      endpoint,
-      status: response.status,
-      statusText: response.statusText,
-      errorMessage
-    });
-    
     throw new ApiError(response.status, errorMessage);
   }
 
-  const data = await response.json();
-  console.log("API response data:", data);
-  return data;
+  return await response.json();
 }
 
 export const api = {
