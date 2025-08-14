@@ -1,21 +1,19 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Phone, Key } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { otpSendSchema, otpVerifySchema, OtpSendData, OtpVerifyData } from "@shared/schema";
+import { otpSendSchema, OtpSendData } from "@shared/schema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { OtpForm } from "@/components/otp-form";
 import { Redirect } from "wouter";
 
 export default function AuthPage() {
   const { user, sendOtpMutation, verifyOtpMutation } = useAuth();
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const otpInputRef = useRef<HTMLInputElement>(null);
 
   // Redirect if already authenticated
   if (user) {
@@ -29,43 +27,24 @@ export default function AuthPage() {
     },
   });
 
-  const otpForm = useForm<{ otp: string }>({
-    resolver: zodResolver(otpVerifySchema.pick({ otp: true })),
-    defaultValues: {
-      otp: "",
-    },
-  });
-
-  // Focus OTP input when step changes to OTP
-  useEffect(() => {
-    if (step === "otp" && otpInputRef.current) {
-      setTimeout(() => {
-        otpInputRef.current?.focus();
-      }, 100);
-    }
-  }, [step]);
-
   const handleSendOtp = (data: OtpSendData) => {
     setPhoneNumber(data.phoneNumber);
     sendOtpMutation.mutate(data, {
       onSuccess: () => {
-        // Clear the OTP form completely
-        otpForm.reset({ otp: "" });
         setStep("otp");
       },
     });
   };
 
-  const handleVerifyOtp = (data: { otp: string }) => {
+  const handleVerifyOtp = (otp: string) => {
     verifyOtpMutation.mutate({
       phoneNumber: phoneNumber,
-      otp: data.otp,
+      otp: otp,
     });
   };
 
   const handleBackToPhone = () => {
     setStep("phone");
-    otpForm.reset({ otp: "" });
   };
 
   return (
@@ -127,57 +106,12 @@ export default function AuthPage() {
                   </form>
                 </Form>
               ) : (
-                <Form {...otpForm}>
-                  <form onSubmit={otpForm.handleSubmit(handleVerifyOtp)} className="space-y-6">
-                    <FormField
-                      control={otpForm.control}
-                      name="otp"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium text-foreground">Verification Code</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              ref={otpInputRef}
-                              type="text"
-                              inputMode="numeric"
-                              pattern="[0-9]*"
-                              placeholder="123456"
-                              maxLength={6}
-                              className="text-center text-2xl font-mono tracking-widest h-16 border-border bg-white"
-                              data-testid="input-otp"
-                              onChange={(e) => {
-                                // Only allow numeric input
-                                const value = e.target.value.replace(/\D/g, '');
-                                field.onChange(value);
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <Button 
-                      type="submit" 
-                      className="w-full h-12 bg-foreground text-white hover:bg-gray-800 shadow-sm"
-                      disabled={verifyOtpMutation.isPending}
-                      data-testid="button-verify-otp"
-                    >
-                      {verifyOtpMutation.isPending ? "Verifying..." : "Verify & Sign In"}
-                    </Button>
-                    
-                    <Button 
-                      type="button" 
-                      variant="ghost"
-                      className="w-full h-10 text-muted-foreground hover:bg-notion-gray"
-                      onClick={handleBackToPhone}
-                      data-testid="button-back-to-phone"
-                    >
-                      ← Back to Phone Number
-                    </Button>
-                  </form>
-                </Form>
+                <OtpForm
+                  phoneNumber={phoneNumber}
+                  isLoading={verifyOtpMutation.isPending}
+                  onSubmit={handleVerifyOtp}
+                  onBack={handleBackToPhone}
+                />
               )}
             </div>
           </div>

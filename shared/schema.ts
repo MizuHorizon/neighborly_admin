@@ -9,6 +9,10 @@ export const otpVerifySchema = z.object({
   otp: z.string().length(6, "OTP must be 6 digits"),
 });
 
+export const otpOnlySchema = z.object({
+  otp: z.string().length(6, "OTP must be 6 digits"),
+});
+
 export const rejectApplicationSchema = z.object({
   reason: z.string().min(1, "Rejection reason is required"),
 });
