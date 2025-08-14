@@ -70,11 +70,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         const result = await response.json();
-        if (!result.success || !result.data?.user) {
+        if (!result.success || !result.data) {
           throw new Error("Invalid response format");
         }
         
-        return result.data.user;
+        return result.data;
       } catch (error) {
         console.error("Auth query error:", error);
         console.log("Access token:", accessToken);
