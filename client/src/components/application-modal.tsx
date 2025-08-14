@@ -220,7 +220,13 @@ export function ApplicationModal({ application, isOpen, onClose }: ApplicationMo
                     <div>
                       <h4 className="text-sm font-medium text-foreground">Driving License</h4>
                       <p className="text-xs text-muted-foreground">
-                        Expires {format(new Date(application.driving_license_expiry_date), "MMM dd, yyyy")}
+                        Expires {(() => {
+                          try {
+                            return application.driving_license_expiry_date ? format(new Date(application.driving_license_expiry_date), "MMM dd, yyyy") : "Unknown date";
+                          } catch {
+                            return "Unknown date";
+                          }
+                        })()}
                       </p>
                     </div>
                   </div>
@@ -246,7 +252,13 @@ export function ApplicationModal({ application, isOpen, onClose }: ApplicationMo
                       <h4 className="text-sm font-medium text-foreground">Insurance</h4>
                       <p className="text-xs text-muted-foreground">{application.insurance_document_number}</p>
                       <p className="text-xs text-muted-foreground">
-                        Expires {format(new Date(application.insurance_expiry_date), "MMM dd, yyyy")}
+                        Expires {(() => {
+                          try {
+                            return application.insurance_expiry_date ? format(new Date(application.insurance_expiry_date), "MMM dd, yyyy") : "Unknown date";
+                          } catch {
+                            return "Unknown date";
+                          }
+                        })()}
                       </p>
                     </div>
                   </div>
