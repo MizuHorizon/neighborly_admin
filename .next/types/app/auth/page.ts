@@ -1,4 +1,4 @@
-// File: /home/runner/workspace/app/auth/page.tsx
+// File: /Users/anshumansharma/Desktop/AdminConsole/app/auth/page.tsx
 import * as entry from '../../../../app/auth/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

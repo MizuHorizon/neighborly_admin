@@ -11,22 +11,26 @@ import { DriverApplication } from "@shared/schema";
 import { api } from "@/lib/api";
 import { ApplicationModal } from "@/components/application-modal";
 import { useAuth } from "@/hooks/use-auth";
+import { ApiResponse } from "@shared/schema";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const [selectedApplication, setSelectedApplication] = useState<DriverApplication | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: applications, isLoading, error } = useQuery<DriverApplication[]>({
+  const { data: applicationsResponse, isLoading, error } = useQuery<ApiResponse<DriverApplication[]>>({
     queryKey: ["/api/driver-applications"],
     queryFn: () => api.getDriverApplications(),
   });
 
+  // Extract the applications array from the API response
+  const applications = applicationsResponse?.data || [];
+
   const stats = {
-    total: applications?.length || 0,
-    pending: applications?.filter(app => app.status === "pending").length || 0,
-    approved: applications?.filter(app => app.status === "approved").length || 0,
-    rejected: applications?.filter(app => app.status === "rejected").length || 0,
+    total: applications.length || 0,
+    pending: applications.filter(app => app.status === "pending").length || 0,
+    approved: applications.filter(app => app.status === "approved").length || 0,
+    rejected: applications.filter(app => app.status === "rejected").length || 0,
   };
 
   const handleViewApplication = (application: DriverApplication) => {
@@ -42,13 +46,13 @@ export default function Dashboard() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+        return <Badge variant="secondary" className="bg-notion-gray text-notion-text border-notion-border hover:bg-notion-gray-dark transition-colors duration-200"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
       case "approved":
-        return <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200"><CheckCircle2 className="h-3 w-3 mr-1" />Approved</Badge>;
+        return <Badge variant="secondary" className="bg-notion-black text-white border-notion-black hover:bg-notion-text-light transition-colors duration-200"><CheckCircle2 className="h-3 w-3 mr-1" />Approved</Badge>;
       case "rejected":
-        return <Badge variant="secondary" className="bg-red-100 text-red-800 hover:bg-red-200"><XCircle className="h-3 w-3 mr-1" />Rejected</Badge>;
+        return <Badge variant="secondary" className="bg-notion-gray text-notion-text border-notion-border hover:bg-notion-gray-dark transition-colors duration-200"><XCircle className="h-3 w-3 mr-1" />Rejected</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="outline" className="text-notion-text-muted border-notion-border">{status}</Badge>;
     }
   };
 
@@ -87,28 +91,28 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-notion-gray-light">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-white border-b border-notion-border shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-4">
-              <div className="h-12 w-12 bg-foreground rounded-lg flex items-center justify-center">
+              <div className="h-12 w-12 bg-notion-black rounded-lg flex items-center justify-center">
                 <Shield className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Neighborly Admin</h1>
-                <p className="text-sm text-muted-foreground">Driver Application Management</p>
+                <h1 className="text-2xl font-bold text-notion-text">Neighborly Admin</h1>
+                <p className="text-sm text-notion-text-muted">Driver Application Management</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-foreground">{user?.name}</p>
-                <p className="text-xs text-muted-foreground capitalize">{user?.role} Access</p>
+                <p className="text-sm font-medium text-notion-text">{user?.name}</p>
+                <p className="text-xs text-notion-text-muted capitalize">{user?.role} Access</p>
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={logout}
-                className="border-gray-300 hover:bg-gray-50"
+                className="border-notion-border hover:bg-notion-gray text-notion-text hover:text-notion-text transition-colors duration-200"
                 data-testid="button-logout"
               >
                 <LogOut className="h-4 w-4 mr-2" />
@@ -123,86 +127,86 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="notion-card">
+          <Card className="bg-white border border-notion-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Applications</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-notion-text-muted">Total Applications</CardTitle>
+              <Users className="h-4 w-4 text-notion-text-light" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold" data-testid="stat-total">{stats.total}</div>
+              <div className="text-2xl font-bold text-notion-text" data-testid="stat-total">{stats.total}</div>
             </CardContent>
           </Card>
-          <Card className="notion-card">
+          <Card className="bg-white border border-notion-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Pending Review</CardTitle>
-              <Clock className="h-4 w-4 text-yellow-500" />
+              <CardTitle className="text-sm font-medium text-notion-text-muted">Pending Review</CardTitle>
+              <Clock className="h-4 w-4 text-notion-text-muted" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600" data-testid="stat-pending">{stats.pending}</div>
+              <div className="text-2xl font-bold text-notion-text" data-testid="stat-pending">{stats.pending}</div>
             </CardContent>
           </Card>
-          <Card className="notion-card">
+          <Card className="bg-white border border-notion-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Approved</CardTitle>
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
+              <CardTitle className="text-sm font-medium text-notion-text-muted">Approved</CardTitle>
+              <CheckCircle2 className="h-4 w-4 text-notion-text-muted" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600" data-testid="stat-approved">{stats.approved}</div>
+              <div className="text-2xl font-bold text-notion-text" data-testid="stat-approved">{stats.approved}</div>
             </CardContent>
           </Card>
-          <Card className="notion-card">
+          <Card className="bg-white border border-notion-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Rejected</CardTitle>
-              <XCircle className="h-4 w-4 text-red-500" />
+              <CardTitle className="text-sm font-medium text-notion-text-muted">Rejected</CardTitle>
+              <XCircle className="h-4 w-4 text-notion-text-muted" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600" data-testid="stat-rejected">{stats.rejected}</div>
+              <div className="text-2xl font-bold text-notion-text" data-testid="stat-rejected">{stats.rejected}</div>
             </CardContent>
           </Card>
         </div>
 
         {/* Applications Table */}
-        <Card className="notion-card">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-foreground">Driver Applications</CardTitle>
-            <p className="text-sm text-muted-foreground">Review and manage driver applications for Neighborly</p>
+        <Card className="bg-white border border-notion-border rounded-lg shadow-sm">
+          <CardHeader className="border-b border-notion-border">
+            <CardTitle className="text-lg font-semibold text-notion-text">Driver Applications</CardTitle>
+            <p className="text-sm text-notion-text-muted">Review and manage driver applications for Neighborly</p>
           </CardHeader>
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow className="border-b border-gray-200">
-                  <TableHead className="font-medium text-muted-foreground">Driver</TableHead>
-                  <TableHead className="font-medium text-muted-foreground">Contact</TableHead>
-                  <TableHead className="font-medium text-muted-foreground">Vehicle</TableHead>
-                  <TableHead className="font-medium text-muted-foreground">Status</TableHead>
-                  <TableHead className="font-medium text-muted-foreground">Actions</TableHead>
+                <TableRow className="border-b border-notion-border bg-notion-gray">
+                  <TableHead className="font-medium text-notion-text-muted py-3">Driver</TableHead>
+                  <TableHead className="font-medium text-notion-text-muted py-3">Contact</TableHead>
+                  <TableHead className="font-medium text-notion-text-muted py-3">Vehicle</TableHead>
+                  <TableHead className="font-medium text-notion-text-muted py-3">Status</TableHead>
+                  <TableHead className="font-medium text-notion-text-muted py-3">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {applications?.map((application) => (
-                  <TableRow key={application.application_id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <TableRow key={application.application_id} className="border-b border-notion-border hover:bg-notion-gray transition-colors duration-150">
                     <TableCell className="py-4">
                       <div>
-                        <div className="font-medium text-foreground" data-testid={`text-name-${application.application_id}`}>
+                        <div className="font-medium text-notion-text" data-testid={`text-name-${application.application_id}`}>
                           {application.full_name}
                         </div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-sm text-notion-text-muted">
                           ID: {application.application_id?.slice(0, 8)}...
                         </div>
                       </div>
                     </TableCell>
                     <TableCell className="py-4">
                       <div>
-                        <div className="text-sm text-foreground">{application.email}</div>
-                        <div className="text-sm text-muted-foreground">{application.phone_number}</div>
+                        <div className="text-sm text-notion-text">{application.email}</div>
+                        <div className="text-sm text-notion-text-muted">{application.phone_number}</div>
                       </div>
                     </TableCell>
                     <TableCell className="py-4">
                       <div>
-                        <div className="font-medium text-foreground">
+                        <div className="font-medium text-notion-text">
                           {application.car.car_name} {application.car.car_model}
                         </div>
-                        <div className="text-sm text-muted-foreground font-mono">
+                        <div className="text-sm text-notion-text-muted font-mono">
                           {application.car.license_plate}
                         </div>
                       </div>
@@ -215,7 +219,7 @@ export default function Dashboard() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleViewApplication(application)}
-                        className="border-gray-300 hover:bg-gray-50"
+                        className="border-notion-border hover:bg-notion-gray text-notion-text hover:text-notion-text transition-colors duration-150"
                         data-testid={`button-review-${application.application_id}`}
                       >
                         <Eye className="h-4 w-4 mr-1" />
@@ -229,9 +233,9 @@ export default function Dashboard() {
 
             {applications?.length === 0 && (
               <div className="text-center py-12">
-                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-foreground mb-2">No Applications Found</h3>
-                <p className="text-muted-foreground">There are currently no driver applications to review.</p>
+                <Users className="h-12 w-12 text-notion-text-light mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-notion-text mb-2">No Applications Found</h3>
+                <p className="text-notion-text-muted">There are currently no driver applications to review.</p>
               </div>
             )}
           </CardContent>

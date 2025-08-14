@@ -12,6 +12,9 @@ export const metadata = {
   description: 'Admin dashboard for managing driver applications for Neighborly ride-sharing service',
 }
 
+// Force dynamic rendering to prevent SSR issues with client-side providers
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
   children,
 }: {

@@ -13,6 +13,9 @@ import { OtpForm } from "@/components/otp-form";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+// Force dynamic rendering to prevent SSR issues
+export const dynamic = 'force-dynamic';
+
 export default function AuthPage() {
   const { user, sendOtpMutation, verifyOtpMutation } = useAuth();
   const [step, setStep] = useState<"phone" | "otp">("phone");
@@ -63,13 +66,13 @@ export default function AuthPage() {
         {/* Left Column - Form */}
         <div className="max-w-md w-full mx-auto space-y-8">
           <div className="text-center">
-            <div className="mx-auto h-16 w-16 bg-foreground rounded-lg flex items-center justify-center mb-6">
+            <div className="mx-auto h-16 w-16 bg-notion-blue rounded-lg flex items-center justify-center mb-6">
               <Shield className="h-8 w-8 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-foreground">
+            <h2 className="text-3xl font-bold text-gray-900">
               {step === "phone" ? "Admin Login" : "Verify Code"}
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-gray-600">
               {step === "phone" 
                 ? "Enter your phone number to receive a verification code" 
                 : `Enter the 6-digit code sent to ${phoneNumber}`
@@ -77,62 +80,60 @@ export default function AuthPage() {
             </p>
           </div>
 
-          <div className="notion-card border-0 shadow-notion">
-            <div className="p-8">
-              {step === "phone" ? (
-                <Form {...phoneForm}>
-                  <form onSubmit={phoneForm.handleSubmit(handleSendOtp)} className="space-y-6">
-                    <FormField
-                      control={phoneForm.control}
-                      name="phoneNumber"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium text-foreground">Phone Number</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                              <Input
-                                {...field}
-                                type="tel"
-                                placeholder="+1 (555) 123-4567"
-                                className="pl-10 h-12 border-gray-200 focus:border-notion-blue focus:ring-notion-blue"
-                                data-testid="input-phone"
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      className="w-full h-12 bg-foreground hover:bg-foreground/90 text-white font-medium"
-                      disabled={sendOtpMutation.isPending}
-                      data-testid="button-send-otp"
-                    >
-                      {sendOtpMutation.isPending ? (
-                        <div className="flex items-center space-x-2">
-                          <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          <span>Sending...</span>
-                        </div>
-                      ) : (
-                        <>
-                          <Key className="h-4 w-4 mr-2" />
-                          Send Verification Code
-                        </>
-                      )}
-                    </Button>
-                  </form>
-                </Form>
-              ) : (
-                <OtpForm
-                  onSubmit={handleVerifyOtp}
-                  onBack={handleBackToPhone}
-                  isLoading={verifyOtpMutation.isPending}
-                  phoneNumber={phoneNumber}
-                />
-              )}
-            </div>
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+            {step === "phone" ? (
+              <Form {...phoneForm}>
+                <form onSubmit={phoneForm.handleSubmit(handleSendOtp)} className="space-y-6">
+                  <FormField
+                    control={phoneForm.control}
+                    name="phoneNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700">Phone Number</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                            <Input
+                              {...field}
+                              type="tel"
+                              placeholder="+1 (555) 123-4567"
+                              className="pl-10 h-12 border-gray-200 focus:border-notion-blue focus:ring-notion-blue/20 focus:ring-2 transition-colors duration-200"
+                              data-testid="input-phone"
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type="submit"
+                    className="w-full h-12 bg-notion-blue hover:bg-notion-blue-dark text-white font-medium transition-colors duration-200"
+                    disabled={sendOtpMutation.isPending}
+                    data-testid="button-send-otp"
+                  >
+                    {sendOtpMutation.isPending ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Sending...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <Key className="h-4 w-4 mr-2" />
+                        Send Verification Code
+                      </>
+                    )}
+                  </Button>
+                </form>
+              </Form>
+            ) : (
+              <OtpForm
+                onSubmit={handleVerifyOtp}
+                onBack={handleBackToPhone}
+                isLoading={verifyOtpMutation.isPending}
+                phoneNumber={phoneNumber}
+              />
+            )}
           </div>
         </div>
 
@@ -143,8 +144,8 @@ export default function AuthPage() {
               <Shield className="h-16 w-16 text-white" />
             </div>
             <div className="space-y-4">
-              <h1 className="text-4xl font-bold text-foreground">Neighborly Admin</h1>
-              <p className="text-xl text-muted-foreground max-w-md mx-auto">
+              <h1 className="text-4xl font-bold text-gray-900">Neighborly Admin</h1>
+              <p className="text-xl text-gray-600 max-w-md mx-auto">
                 Manage driver applications with ease. Streamlined approval process for ride-sharing services.
               </p>
               <div className="grid grid-cols-1 gap-4 max-w-sm mx-auto mt-8">
@@ -154,7 +155,7 @@ export default function AuthPage() {
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <span className="text-sm text-muted-foreground">Review driver applications</span>
+                  <span className="text-sm text-gray-600">Review driver applications</span>
                 </div>
                 <div className="flex items-center space-x-3 text-left">
                   <div className="h-8 w-8 bg-notion-purple rounded-lg flex items-center justify-center flex-shrink-0">
@@ -162,7 +163,7 @@ export default function AuthPage() {
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <span className="text-sm text-muted-foreground">Approve or reject with reasons</span>
+                  <span className="text-sm text-gray-600">Approve or reject with reasons</span>
                 </div>
                 <div className="flex items-center space-x-3 text-left">
                   <div className="h-8 w-8 bg-notion-blue rounded-lg flex items-center justify-center flex-shrink-0">
@@ -170,7 +171,7 @@ export default function AuthPage() {
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <span className="text-sm text-muted-foreground">Secure OTP authentication</span>
+                  <span className="text-sm text-gray-600">Secure OTP authentication</span>
                 </div>
               </div>
             </div>

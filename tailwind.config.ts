@@ -2,7 +2,11 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/components/ui/**/*.{js,ts,jsx,tsx,mdx}"
+  ],
   theme: {
     extend: {
       borderRadius: {
@@ -53,7 +57,7 @@ export default {
         },
         sidebar: {
           DEFAULT: "var(--sidebar-background)",
-          foreground: "var(--sidebar-foreground)",
+          foreground: "var(--sidebar-primary)",
           primary: "var(--sidebar-primary)",
           "primary-foreground": "var(--sidebar-primary-foreground)",
           accent: "var(--sidebar-accent)",
@@ -64,6 +68,19 @@ export default {
         success: "var(--success)",
         warning: "var(--warning)", 
         danger: "var(--danger)",
+        // Notion-inspired colors
+        notion: {
+          "gray-light": "rgb(var(--notion-gray-light))",
+          "gray": "rgb(var(--notion-gray))",
+          "gray-dark": "rgb(var(--notion-gray-dark))",
+          "black": "rgb(var(--notion-black))",
+          "white": "rgb(var(--notion-white))",
+          "border": "rgb(var(--notion-border))",
+          "border-dark": "rgb(var(--notion-border-dark))",
+          "text": "rgb(var(--notion-text))",
+          "text-muted": "rgb(var(--notion-text-muted))",
+          "text-light": "rgb(var(--notion-text-light))",
+        },
       },
       fontFamily: {
         sans: ["var(--font-sans)"],
