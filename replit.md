@@ -2,7 +2,19 @@
 
 ## Overview
 
-This is a React-based admin dashboard for managing driver applications for a ride-sharing service called "Neighborly". The application allows administrators to review, approve, or reject driver applications submitted through the external Neighborly API. The frontend connects directly to the external API at https://api.neighborly.live/api for all data operations, including OTP-based authentication and driver application management.
+This is a Next.js-based admin dashboard for managing driver applications for a ride-sharing service called "Neighborly". The application allows administrators to review, approve, or reject driver applications submitted through the external Neighborly API. The frontend connects directly to the external API at https://api.neighborly.live/api for all data operations, including OTP-based authentication and driver application management.
+
+## Recent Changes (August 14, 2025)
+
+### Migration to Next.js for Vercel Deployment
+- **Date**: August 14, 2025
+- **Reason**: User needed to deploy to Vercel, which requires Next.js for optimal serverless deployment
+- **Changes Made**:
+  - Migrated from Vite + Express + Wouter to Next.js App Router
+  - Updated project structure to use `app/` directory
+  - Converted client-side routing from Wouter to Next.js navigation
+  - Updated authentication to work with Next.js client components
+  - Maintained all existing functionality: OTP auth, session persistence, admin dashboard
 
 ## User Preferences
 
@@ -12,10 +24,10 @@ Design preference: Notion-style interface with clean lines, subtle shadows, and 
 ## System Architecture
 
 ### Frontend Architecture
-The application uses a modern React stack with TypeScript:
+The application uses Next.js with TypeScript:
+- **Next.js 14** with App Router for SSR/SSG capabilities
 - **React 18** with functional components and hooks
-- **Vite** as the build tool and development server
-- **Wouter** for client-side routing (lightweight React Router alternative)
+- **Next.js App Router** for file-based routing and layouts
 - **TanStack Query** for server state management and API caching
 - **React Hook Form** with **Zod** for form validation
 - **Tailwind CSS** with **shadcn/ui** component library for styling
@@ -56,18 +68,17 @@ Key TypeScript interfaces defined in shared schema:
 - Form validation schemas using Zod for type safety
 
 ### Backend Architecture
-Minimal Express.js server that primarily serves the React frontend:
-- **Static file serving** in production
-- **Vite development middleware** in development mode
-- No database or API routes - all data operations handled by external API
-- Request logging middleware for debugging
-- Error handling middleware
+Next.js serverless architecture optimized for Vercel deployment:
+- **Client-side only application** - no server-side API routes needed
+- All data operations handled by external Neighborly API
+- Static generation and client-side rendering for optimal performance
+- Automatic code splitting and optimization
 
 ### Build and Deployment
-- **Development**: Vite dev server with HMR and React Fast Refresh
-- **Production**: Vite builds optimized bundle, Express serves static files
-- **Database migrations**: Drizzle Kit configured for PostgreSQL (though not used in current implementation)
-- **TypeScript**: Strict type checking across client, server, and shared code
+- **Development**: Next.js dev server with HMR and React Fast Refresh
+- **Production**: Next.js builds optimized static export for Vercel deployment
+- **Deployment**: Optimized for Vercel serverless platform with automatic deployments
+- **TypeScript**: Strict type checking across all components and shared code
 
 ## External Dependencies
 
