@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, ExternalLink, Send } from "lucide-react";
+import { CheckCircle2, XCircle, ExternalLink, Send, User, Car, FileText, Calendar, Phone, Mail, MapPin } from "lucide-react";
 import { DriverApplication } from "@shared/schema";
 import { api } from "@/lib/api";
 import { queryClient } from "@/lib/queryClient";
@@ -97,83 +97,125 @@ export function ApplicationModal({ application, isOpen, onClose }: ApplicationMo
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Driver Application Details</DialogTitle>
-        </DialogHeader>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 border-0 shadow-notion-lg">
+        <div className="bg-white rounded-lg">
+          <DialogHeader className="px-6 py-4 border-b border-border">
+            <DialogTitle className="text-lg font-semibold text-foreground">Review Application</DialogTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              {application.full_name} • Submitted {format(new Date(application.created_at), "MMM dd, yyyy")}
+            </p>
+          </DialogHeader>
 
-        <div className="space-y-8">
-          {/* Personal Information */}
-          <div>
-            <h4 className="text-md font-semibold text-gray-900 mb-4">Personal Information</h4>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">Full Name</Label>
-                  <p className="text-sm text-gray-900" data-testid="text-full-name">{application.full_name}</p>
+          <div className="px-6 py-6 space-y-8">
+            {/* Personal Information */}
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="h-8 w-8 bg-notion-blue rounded-lg flex items-center justify-center">
+                  <User className="h-4 w-4 text-notion-blue-dark" />
                 </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">Email</Label>
-                  <p className="text-sm text-gray-900" data-testid="text-email">{application.email}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">Phone Number</Label>
-                  <p className="text-sm text-gray-900" data-testid="text-phone">{application.phone_number}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">Date of Birth</Label>
-                  <p className="text-sm text-gray-900" data-testid="text-dob">
-                    {format(new Date(application.date_of_birth), "MMM dd, yyyy")}
-                  </p>
-                </div>
-                <div className="md:col-span-2">
-                  <Label className="text-sm font-medium text-gray-600">Address</Label>
-                  <p className="text-sm text-gray-900" data-testid="text-address">{application.address}</p>
+                <h3 className="text-base font-semibold text-foreground">Personal Information</h3>
+              </div>
+              <div className="bg-notion-gray rounded-lg p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Full Name</span>
+                    </div>
+                    <p className="text-sm font-medium text-foreground" data-testid="text-full-name">{application.full_name}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Email</span>
+                    </div>
+                    <p className="text-sm text-foreground" data-testid="text-email">{application.email}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Phone Number</span>
+                    </div>
+                    <p className="text-sm text-foreground" data-testid="text-phone">{application.phone_number}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Date of Birth</span>
+                    </div>
+                    <p className="text-sm text-foreground" data-testid="text-dob">
+                      {format(new Date(application.date_of_birth), "MMM dd, yyyy")}
+                    </p>
+                  </div>
+                  <div className="md:col-span-2 space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Address</span>
+                    </div>
+                    <p className="text-sm text-foreground" data-testid="text-address">{application.address}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Vehicle Information */}
-          <div>
-            <h4 className="text-md font-semibold text-gray-900 mb-4">Vehicle Information</h4>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">Car Name</Label>
-                  <p className="text-sm text-gray-900" data-testid="text-car-name">{application.car.car_name}</p>
+            {/* Vehicle Information */}
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="h-8 w-8 bg-notion-purple rounded-lg flex items-center justify-center">
+                  <Car className="h-4 w-4 text-notion-purple-dark" />
                 </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">Model</Label>
-                  <p className="text-sm text-gray-900" data-testid="text-car-model">{application.car.car_model}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">License Plate</Label>
-                  <p className="text-sm text-gray-900" data-testid="text-license-plate">{application.car.license_plate}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">Color</Label>
-                  <p className="text-sm text-gray-900" data-testid="text-car-color">{application.car.car_color}</p>
+                <h3 className="text-base font-semibold text-foreground">Vehicle Information</h3>
+              </div>
+              <div className="bg-notion-gray rounded-lg p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Vehicle</span>
+                    <p className="text-sm font-medium text-foreground" data-testid="text-car-name">
+                      {application.car.car_name} {application.car.car_model}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">License Plate</span>
+                    <p className="text-sm text-foreground font-mono" data-testid="text-license-plate">{application.car.license_plate}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Color</span>
+                    <p className="text-sm text-foreground capitalize" data-testid="text-car-color">{application.car.car_color}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Year</span>
+                    <p className="text-sm text-foreground" data-testid="text-car-year">{application.car.car_year || 'Not specified'}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Documents */}
-          <div>
-            <h4 className="text-md font-semibold text-gray-900 mb-4">Documents</h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Driving License */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h5 className="font-medium text-gray-900 mb-2">Driving License</h5>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-600">
-                    Expiry: {format(new Date(application.driving_license_expiry_date), "MMM dd, yyyy")}
-                  </p>
+            {/* Documents */}
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="h-8 w-8 bg-notion-green rounded-lg flex items-center justify-center">
+                  <FileText className="h-4 w-4 text-notion-green-dark" />
+                </div>
+                <h3 className="text-base font-semibold text-foreground">Documents</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Driving License */}
+                <div className="notion-card p-4">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="h-10 w-10 bg-notion-blue rounded-lg flex items-center justify-center">
+                      <FileText className="h-5 w-5 text-notion-blue-dark" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-foreground">Driving License</h4>
+                      <p className="text-xs text-muted-foreground">
+                        Expires {format(new Date(application.driving_license_expiry_date), "MMM dd, yyyy")}
+                      </p>
+                    </div>
+                  </div>
                   <Button
                     size="sm"
-                    variant="outline"
-                    className="w-full bg-blue-50 text-blue-700 hover:bg-blue-100"
+                    variant="ghost"
+                    className="w-full justify-start text-notion-blue-dark hover:bg-notion-blue"
                     onClick={() => handleViewDocument(application.driving_license_url, "Driving License")}
                     data-testid="button-view-license"
                   >
@@ -181,20 +223,25 @@ export function ApplicationModal({ application, isOpen, onClose }: ApplicationMo
                     View Document
                   </Button>
                 </div>
-              </div>
 
-              {/* Insurance */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h5 className="font-medium text-gray-900 mb-2">Insurance</h5>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-600">Number: {application.insurance_document_number}</p>
-                  <p className="text-sm text-gray-600">
-                    Expiry: {format(new Date(application.insurance_expiry_date), "MMM dd, yyyy")}
-                  </p>
+                {/* Insurance */}
+                <div className="notion-card p-4">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="h-10 w-10 bg-notion-green rounded-lg flex items-center justify-center">
+                      <FileText className="h-5 w-5 text-notion-green-dark" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-foreground">Insurance</h4>
+                      <p className="text-xs text-muted-foreground">{application.insurance_document_number}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Expires {format(new Date(application.insurance_expiry_date), "MMM dd, yyyy")}
+                      </p>
+                    </div>
+                  </div>
                   <Button
                     size="sm"
-                    variant="outline"
-                    className="w-full bg-green-50 text-green-700 hover:bg-green-100"
+                    variant="ghost"
+                    className="w-full justify-start text-notion-green-dark hover:bg-notion-green"
                     onClick={() => handleViewDocument(application.insurance_document_url, "Insurance")}
                     data-testid="button-view-insurance"
                   >
@@ -202,17 +249,22 @@ export function ApplicationModal({ application, isOpen, onClose }: ApplicationMo
                     View Document
                   </Button>
                 </div>
-              </div>
 
-              {/* Car Sticker */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h5 className="font-medium text-gray-900 mb-2">Car Sticker</h5>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-600">Status: Uploaded</p>
+                {/* Car Sticker */}
+                <div className="notion-card p-4">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="h-10 w-10 bg-notion-purple rounded-lg flex items-center justify-center">
+                      <FileText className="h-5 w-5 text-notion-purple-dark" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-foreground">Car Sticker</h4>
+                      <p className="text-xs text-muted-foreground">Vehicle identification</p>
+                    </div>
+                  </div>
                   <Button
                     size="sm"
-                    variant="outline"
-                    className="w-full bg-purple-50 text-purple-700 hover:bg-purple-100"
+                    variant="ghost"
+                    className="w-full justify-start text-notion-purple-dark hover:bg-notion-purple"
                     onClick={() => handleViewDocument(application.car_sticker_url, "Car Sticker")}
                     data-testid="button-view-sticker"
                   >
@@ -222,55 +274,58 @@ export function ApplicationModal({ application, isOpen, onClose }: ApplicationMo
                 </div>
               </div>
             </div>
+
+            {/* Rejection Reason Input */}
+            {showRejectionInput && (
+              <div className="bg-notion-red rounded-lg p-4">
+                <Label htmlFor="rejectionReason" className="text-sm font-medium text-foreground mb-3 block">
+                  Rejection Reason
+                </Label>
+                <Textarea
+                  id="rejectionReason"
+                  rows={3}
+                  className="w-full border-border bg-white"
+                  placeholder="Please provide a detailed reason for rejection..."
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  data-testid="textarea-rejection-reason"
+                />
+              </div>
+            )}
           </div>
 
-          {/* Rejection Reason Input */}
-          {showRejectionInput && (
-            <div>
-              <Label htmlFor="rejectionReason" className="text-sm font-medium text-gray-700 mb-2">
-                Rejection Reason
-              </Label>
-              <Textarea
-                id="rejectionReason"
-                rows={3}
-                className="w-full"
-                placeholder="Please provide a reason for rejection..."
-                value={rejectionReason}
-                onChange={(e) => setRejectionReason(e.target.value)}
-                data-testid="textarea-rejection-reason"
-              />
-            </div>
-          )}
-
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-200">
-            <Button
-              className="flex-1 bg-success text-white hover:bg-green-600"
-              onClick={handleApprove}
-              disabled={approveMutation.isPending || rejectMutation.isPending}
-              data-testid="button-approve"
-            >
-              <CheckCircle className="h-4 w-4 mr-2" />
-              {approveMutation.isPending ? "Approving..." : "Approve Application"}
-            </Button>
-            <Button
-              className="flex-1 bg-danger text-white hover:bg-red-600"
-              onClick={handleReject}
-              disabled={approveMutation.isPending || rejectMutation.isPending}
-              data-testid="button-reject"
-            >
-              {showRejectionInput ? (
-                <>
-                  <Send className="h-4 w-4 mr-2" />
-                  {rejectMutation.isPending ? "Rejecting..." : "Submit Rejection"}
-                </>
-              ) : (
-                <>
-                  <XCircle className="h-4 w-4 mr-2" />
-                  Reject Application
-                </>
-              )}
-            </Button>
+          <div className="px-6 py-4 border-t border-border bg-notion-gray-light">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                className="flex-1 bg-notion-green-dark text-white hover:bg-green-700 shadow-sm"
+                onClick={handleApprove}
+                disabled={approveMutation.isPending || rejectMutation.isPending}
+                data-testid="button-approve"
+              >
+                <CheckCircle2 className="h-4 w-4 mr-2" />
+                {approveMutation.isPending ? "Approving..." : "Approve Application"}
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1 text-notion-red-dark border-notion-red-dark hover:bg-notion-red"
+                onClick={handleReject}
+                disabled={approveMutation.isPending || rejectMutation.isPending}
+                data-testid="button-reject"
+              >
+                {showRejectionInput ? (
+                  <>
+                    <Send className="h-4 w-4 mr-2" />
+                    {rejectMutation.isPending ? "Rejecting..." : "Submit Rejection"}
+                  </>
+                ) : (
+                  <>
+                    <XCircle className="h-4 w-4 mr-2" />
+                    Reject Application
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>

@@ -7,6 +7,7 @@ This is a React-based admin dashboard for managing driver applications for a rid
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Design preference: Notion-style interface with clean lines, subtle shadows, and modern typography.
 
 ## System Architecture
 

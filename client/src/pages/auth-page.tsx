@@ -56,27 +56,27 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-notion-gray-light">
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         {/* Left Column - Form */}
         <div className="max-w-md w-full mx-auto space-y-8">
           <div className="text-center">
-            <div className="mx-auto h-16 w-16 bg-primary rounded-full flex items-center justify-center mb-6">
+            <div className="mx-auto h-16 w-16 bg-foreground rounded-lg flex items-center justify-center mb-6">
               <Shield className="h-8 w-8 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900">
-              {step === "phone" ? "Admin Login" : "Verify OTP"}
+            <h2 className="text-3xl font-bold text-foreground">
+              {step === "phone" ? "Admin Login" : "Verify Code"}
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-muted-foreground">
               {step === "phone" 
-                ? "Sign in to your admin account" 
-                : `Enter the code sent to ${phoneNumber}`
+                ? "Enter your phone number to receive a verification code" 
+                : `Enter the 6-digit code sent to ${phoneNumber}`
               }
             </p>
           </div>
 
-          <Card>
-            <CardContent className="p-8">
+          <div className="notion-card border-0 shadow-notion">
+            <div className="p-8">
               {step === "phone" ? (
                 <Form {...phoneForm}>
                   <form onSubmit={phoneForm.handleSubmit(handleSendOtp)} className="space-y-6">
@@ -85,17 +85,17 @@ export default function AuthPage() {
                       name="phoneNumber"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
+                          <FormLabel className="text-sm font-medium text-foreground">Phone Number</FormLabel>
                           <FormControl>
                             <div className="relative">
                               <Input
                                 {...field}
                                 type="tel"
                                 placeholder="+1 (555) 123-4567"
-                                className="pl-12"
+                                className="pl-12 border-border bg-white h-12 text-base"
                                 data-testid="input-phone-number"
                               />
-                              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                              <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -105,11 +105,11 @@ export default function AuthPage() {
                     
                     <Button 
                       type="submit" 
-                      className="w-full"
+                      className="w-full h-12 bg-foreground text-white hover:bg-gray-800 shadow-sm"
                       disabled={sendOtpMutation.isPending}
                       data-testid="button-send-otp"
                     >
-                      {sendOtpMutation.isPending ? "Sending..." : "Send OTP"}
+                      {sendOtpMutation.isPending ? "Sending..." : "Send Verification Code"}
                     </Button>
                   </form>
                 </Form>
@@ -121,14 +121,14 @@ export default function AuthPage() {
                       name="otp"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Enter 6-digit code</FormLabel>
+                          <FormLabel className="text-sm font-medium text-foreground">Verification Code</FormLabel>
                           <FormControl>
                             <Input
                               {...field}
                               type="text"
                               placeholder="123456"
                               maxLength={6}
-                              className="text-center text-2xl font-mono tracking-widest"
+                              className="text-center text-2xl font-mono tracking-widest h-16 border-border bg-white"
                               data-testid="input-otp"
                             />
                           </FormControl>
@@ -139,62 +139,73 @@ export default function AuthPage() {
                     
                     <Button 
                       type="submit" 
-                      className="w-full"
+                      className="w-full h-12 bg-foreground text-white hover:bg-gray-800 shadow-sm"
                       disabled={verifyOtpMutation.isPending}
                       data-testid="button-verify-otp"
                     >
-                      {verifyOtpMutation.isPending ? "Verifying..." : "Verify & Login"}
+                      {verifyOtpMutation.isPending ? "Verifying..." : "Verify & Sign In"}
                     </Button>
                     
                     <Button 
                       type="button" 
                       variant="ghost"
-                      className="w-full"
+                      className="w-full h-10 text-muted-foreground hover:bg-notion-gray"
                       onClick={handleBackToPhone}
                       data-testid="button-back-to-phone"
                     >
-                      Back to Phone Number
+                      ← Back to Phone Number
                     </Button>
                   </form>
                 </Form>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         {/* Right Column - Hero Section */}
         <div className="hidden lg:block">
-          <div className="text-center space-y-6">
-            <div className="mx-auto h-32 w-32 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center">
-              <Shield className="h-16 w-16 text-white" />
-            </div>
-            <div className="space-y-4">
-              <h1 className="text-4xl font-bold text-gray-900">
-                Neighborly Admin Dashboard
-              </h1>
-              <p className="text-xl text-gray-600 max-w-md mx-auto">
-                Manage driver applications with secure OTP authentication. 
-                Review, approve, and reject applications efficiently.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 gap-4 max-w-sm mx-auto text-left">
-              <div className="flex items-center space-x-3">
-                <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <Key className="h-4 w-4 text-green-600" />
-                </div>
-                <span className="text-sm text-gray-600">Secure OTP Authentication</span>
+          <div className="space-y-8">
+            <div className="text-center">
+              <div className="mx-auto h-24 w-24 bg-foreground rounded-2xl flex items-center justify-center mb-6">
+                <Shield className="h-12 w-12 text-white" />
               </div>
-              <div className="flex items-center space-x-3">
-                <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Shield className="h-4 w-4 text-blue-600" />
-                </div>
-                <span className="text-sm text-gray-600">Application Management</span>
+              <div className="space-y-4">
+                <h1 className="text-4xl font-bold text-foreground">
+                  Neighborly
+                </h1>
+                <p className="text-lg text-muted-foreground max-w-md mx-auto">
+                  Admin dashboard for reviewing and managing driver applications with secure phone verification.
+                </p>
               </div>
-              <div className="flex items-center space-x-3">
-                <div className="h-8 w-8 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Phone className="h-4 w-4 text-purple-600" />
+            </div>
+            
+            <div className="space-y-4 max-w-sm mx-auto">
+              <div className="flex items-center space-x-4">
+                <div className="h-10 w-10 bg-notion-green rounded-lg flex items-center justify-center">
+                  <Key className="h-5 w-5 text-notion-green-dark" />
                 </div>
-                <span className="text-sm text-gray-600">Real-time Updates</span>
+                <div>
+                  <h3 className="text-sm font-medium text-foreground">Secure Authentication</h3>
+                  <p className="text-xs text-muted-foreground">Phone-based OTP verification</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="h-10 w-10 bg-notion-blue rounded-lg flex items-center justify-center">
+                  <Shield className="h-5 w-5 text-notion-blue-dark" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-foreground">Application Review</h3>
+                  <p className="text-xs text-muted-foreground">Streamlined approval workflow</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="h-10 w-10 bg-notion-purple rounded-lg flex items-center justify-center">
+                  <Phone className="h-5 w-5 text-notion-purple-dark" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-foreground">Real-time Updates</h3>
+                  <p className="text-xs text-muted-foreground">Instant application status changes</p>
+                </div>
               </div>
             </div>
           </div>
