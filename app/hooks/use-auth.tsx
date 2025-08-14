@@ -22,12 +22,17 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const router = useRouter();
-  const [accessToken, setAccessToken] = useState<string | null>(() => {
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize access token on client side only
+  useEffect(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
+      setAccessToken(token);
+      setIsInitialized(true);
     }
-    return null;
-  });
+  }, []);
 
   // Listen for storage changes (e.g., logout in another tab)
   useEffect(() => {
@@ -49,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading,
   } = useQuery<User | null>({
     queryKey: ["/api/user"],
-    enabled: !!accessToken,
+    enabled: !!accessToken && isInitialized,
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
     retry: 1, // Only retry once on failure
@@ -201,7 +206,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user: user ?? null,
-        isLoading,
+        isLoading: !isInitialized || isLoading,
         error,
         accessToken,
         sendOtpMutation,

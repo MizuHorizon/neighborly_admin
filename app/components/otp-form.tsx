@@ -26,8 +26,8 @@ export function OtpForm({ onSubmit, onBack, isLoading, phoneNumber }: OtpFormPro
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="text-center space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Verification Code</label>
-          <p className="text-xs text-gray-500">
+          <label className="text-sm font-medium text-notion-text">Verification Code</label>
+          <p className="text-xs text-notion-text-muted">
             Enter the 6-digit code sent to {phoneNumber}
           </p>
         </div>
@@ -39,12 +39,12 @@ export function OtpForm({ onSubmit, onBack, isLoading, phoneNumber }: OtpFormPro
           data-testid="input-otp"
         >
           <InputOTPGroup className="gap-2">
-            <InputOTPSlot index={0} className="w-12 h-12 text-lg font-medium border-gray-200 focus:border-notion-blue focus:ring-notion-blue/20 focus:ring-2" />
-            <InputOTPSlot index={1} className="w-12 h-12 text-lg font-medium border-gray-200 focus:border-notion-blue focus:ring-notion-blue/20 focus:ring-2" />
-            <InputOTPSlot index={2} className="w-12 h-12 text-lg font-medium border-gray-200 focus:border-notion-blue focus:ring-notion-blue/20 focus:ring-2" />
-            <InputOTPSlot index={3} className="w-12 h-12 text-lg font-medium border-gray-200 focus:border-notion-blue focus:ring-notion-blue/20 focus:ring-2" />
-            <InputOTPSlot index={4} className="w-12 h-12 text-lg font-medium border-gray-200 focus:border-notion-blue focus:ring-notion-blue/20 focus:ring-2" />
-            <InputOTPSlot index={5} className="w-12 h-12 text-lg font-medium border-gray-200 focus:border-notion-blue focus:ring-notion-blue/20 focus:ring-2" />
+            <InputOTPSlot index={0} className="w-12 h-12 text-lg font-medium border-notion-border bg-white text-notion-text focus:border-notion-black focus:ring-notion-black/20 focus:ring-2 transition-all duration-200" />
+            <InputOTPSlot index={1} className="w-12 h-12 text-lg font-medium border-notion-border bg-white text-notion-text focus:border-notion-black focus:ring-notion-black/20 focus:ring-2 transition-all duration-200" />
+            <InputOTPSlot index={2} className="w-12 h-12 text-lg font-medium border-notion-border bg-white text-notion-text focus:border-notion-black focus:ring-notion-black/20 focus:ring-2 transition-all duration-200" />
+            <InputOTPSlot index={3} className="w-12 h-12 text-lg font-medium border-notion-border bg-white text-notion-text focus:border-notion-black focus:ring-notion-black/20 focus:ring-2 transition-all duration-200" />
+            <InputOTPSlot index={4} className="w-12 h-12 text-lg font-medium border-notion-border bg-white text-notion-text focus:border-notion-black focus:ring-notion-black/20 focus:ring-2 transition-all duration-200" />
+            <InputOTPSlot index={5} className="w-12 h-12 text-lg font-medium border-notion-border bg-white text-notion-text focus:border-notion-black focus:ring-notion-black/20 focus:ring-2 transition-all duration-200" />
           </InputOTPGroup>
         </InputOTP>
       </div>
@@ -52,7 +52,7 @@ export function OtpForm({ onSubmit, onBack, isLoading, phoneNumber }: OtpFormPro
       <div className="space-y-3">
         <Button
           type="submit"
-          className="w-full h-12 bg-notion-blue hover:bg-notion-blue-dark text-white font-medium transition-colors duration-200"
+          className="w-full h-12 bg-notion-black hover:bg-notion-text-muted text-white font-medium transition-colors duration-200"
           disabled={otp.length !== 6 || isLoading}
           data-testid="button-verify-otp"
         >
@@ -72,7 +72,7 @@ export function OtpForm({ onSubmit, onBack, isLoading, phoneNumber }: OtpFormPro
         <Button
           type="button"
           variant="ghost"
-          className="w-full h-12 text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+          className="w-full h-12 text-notion-text-muted hover:text-notion-text hover:bg-notion-gray transition-colors duration-200"
           onClick={onBack}
           disabled={isLoading}
           data-testid="button-back-to-phone"
