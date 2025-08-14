@@ -10,10 +10,14 @@ export default function HomePage() {
   const router = useRouter()
 
   useEffect(() => {
+    console.log("HomePage useEffect - user:", user, "isLoading:", isLoading);
     if (!isLoading && !user) {
+      console.log("Redirecting to /auth - no user found");
       router.push('/auth')
     }
   }, [user, isLoading, router])
+
+  console.log("HomePage render - user:", user, "isLoading:", isLoading);
 
   if (isLoading) {
     return (

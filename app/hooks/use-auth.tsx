@@ -189,17 +189,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    console.log("Logout function called");
+    
+    // Clear localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      console.log("LocalStorage cleared");
+    }
+    
+    // Clear state
     setAccessToken(null);
+    console.log("Access token state cleared");
+    
+    // Clear query cache
     queryClient.setQueryData(["/api/user"], null);
     queryClient.clear();
-    router.push("/auth");
+    console.log("Query cache cleared");
     
+    // Show toast
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
+    
+    // Navigate to auth page
+    console.log("Navigating to /auth");
+    router.push("/auth");
   };
 
   return (
