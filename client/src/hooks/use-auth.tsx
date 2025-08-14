@@ -24,14 +24,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return localStorage.getItem("accessToken");
   });
 
-  // Sync access token with localStorage
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token !== accessToken) {
-      setAccessToken(token);
-    }
-  }, [accessToken]);
-
   // Listen for storage changes (e.g., logout in another tab)
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
