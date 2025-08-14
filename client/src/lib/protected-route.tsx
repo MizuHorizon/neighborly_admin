@@ -9,10 +9,10 @@ export function ProtectedRoute({
   path: string;
   component: () => React.JSX.Element;
 }) {
-  const { user, isLoading, accessToken } = useAuth();
+  const { user, isLoading, accessToken, error } = useAuth();
 
   // Show loading while checking authentication or if we have a token but no user yet
-  if (isLoading || (accessToken && !user)) {
+  if (isLoading || (accessToken && !user && !error)) {
     return (
       <Route path={path}>
         <div className="flex items-center justify-center min-h-screen bg-notion-gray-light">
@@ -30,7 +30,8 @@ export function ProtectedRoute({
     );
   }
 
-  if (!user) {
+  // Only redirect to auth if we don't have a token OR if the user is explicitly null
+  if (!accessToken || (!user && !isLoading)) {
     return (
       <Route path={path}>
         <Redirect to="/auth" />
@@ -39,7 +40,7 @@ export function ProtectedRoute({
   }
 
   // Check if user has admin role
-  if (user.role !== "admin") {
+  if (user && user.role !== "admin") {
     return (
       <Route path={path}>
         <div className="flex items-center justify-center min-h-screen">

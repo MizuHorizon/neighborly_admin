@@ -85,10 +85,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return result.data.user;
       } catch (error) {
         console.error("Auth query error:", error);
-        // Clear tokens on any authentication error
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        setAccessToken(null);
+        console.log("Access token:", accessToken);
+        
+        // Only clear tokens if it's an authentication error (401/403)
+        // Don't clear tokens for network errors or other issues
+        if (error instanceof Error && error.message.includes("Authentication failed")) {
+          console.log("Clearing tokens due to auth failure");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          setAccessToken(null);
+          queryClient.setQueryData(["/api/user"], null);
+        }
+        
         throw error;
       }
     },
