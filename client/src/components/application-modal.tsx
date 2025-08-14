@@ -150,7 +150,13 @@ export function ApplicationModal({ application, isOpen, onClose }: ApplicationMo
                       <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Date of Birth</span>
                     </div>
                     <p className="text-sm text-foreground" data-testid="text-dob">
-                      {format(new Date(application.date_of_birth), "MMM dd, yyyy")}
+                      {(() => {
+                        try {
+                          return application.date_of_birth ? format(new Date(application.date_of_birth), "MMM dd, yyyy") : "Unknown date";
+                        } catch {
+                          return "Unknown date";
+                        }
+                      })()}
                     </p>
                   </div>
                   <div className="md:col-span-2 space-y-1">
