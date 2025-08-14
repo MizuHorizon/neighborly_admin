@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,9 +38,13 @@ export default function AuthPage() {
 
   const handleSendOtp = (data: OtpSendData) => {
     setPhoneNumber(data.phoneNumber);
-    otpForm.setValue("phoneNumber", data.phoneNumber);
     sendOtpMutation.mutate(data, {
       onSuccess: () => {
+        // Reset the OTP form and set the phone number correctly
+        otpForm.reset({
+          phoneNumber: data.phoneNumber,
+          otp: "",
+        });
         setStep("otp");
       },
     });
@@ -52,7 +56,10 @@ export default function AuthPage() {
 
   const handleBackToPhone = () => {
     setStep("phone");
-    otpForm.reset();
+    otpForm.reset({
+      phoneNumber: "",
+      otp: "",
+    });
   };
 
   return (
@@ -126,10 +133,18 @@ export default function AuthPage() {
                             <Input
                               {...field}
                               type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
                               placeholder="123456"
                               maxLength={6}
                               className="text-center text-2xl font-mono tracking-widest h-16 border-border bg-white"
                               data-testid="input-otp"
+                              autoFocus
+                              onChange={(e) => {
+                                // Only allow numeric input
+                                const value = e.target.value.replace(/\D/g, '');
+                                field.onChange(value);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
