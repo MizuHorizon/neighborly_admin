@@ -24,6 +24,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return localStorage.getItem("accessToken");
   });
 
+  // Sync access token with localStorage
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token !== accessToken) {
+      setAccessToken(token);
+    }
+  }, [accessToken]);
+
+  // Listen for storage changes (e.g., logout in another tab)
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "accessToken") {
+        setAccessToken(e.newValue);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   const {
     data: user,
     error,
@@ -31,27 +51,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useQuery<User | null>({
     queryKey: ["/api/user"],
     enabled: !!accessToken,
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+    retry: 1, // Only retry once on failure
     queryFn: async () => {
       if (!accessToken) return null;
       
-      const response = await fetch("https://api.neighborly.live/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      try {
+        const response = await fetch("https://api.neighborly.live/api/auth/me", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-          setAccessToken(null);
-          return null;
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            // Token is invalid or expired
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            setAccessToken(null);
+            queryClient.setQueryData(["/api/user"], null);
+            return null;
+          }
+          throw new Error(`Authentication failed: ${response.status}`);
         }
-        throw new Error("Failed to fetch user");
-      }
 
-      const result = await response.json();
-      return result.data.user;
+        const result = await response.json();
+        if (!result.success || !result.data?.user) {
+          throw new Error("Invalid response format");
+        }
+        
+        return result.data.user;
+      } catch (error) {
+        console.error("Auth query error:", error);
+        // Clear tokens on any authentication error
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        setAccessToken(null);
+        throw error;
+      }
     },
   });
 

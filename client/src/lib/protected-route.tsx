@@ -9,13 +9,22 @@ export function ProtectedRoute({
   path: string;
   component: () => React.JSX.Element;
 }) {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, accessToken } = useAuth();
 
-  if (isLoading) {
+  // Show loading while checking authentication or if we have a token but no user yet
+  if (isLoading || (accessToken && !user)) {
     return (
       <Route path={path}>
-        <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="h-8 w-8 animate-spin text-border" />
+        <div className="flex items-center justify-center min-h-screen bg-notion-gray-light">
+          <div className="text-center space-y-4">
+            <div className="h-16 w-16 bg-foreground rounded-lg flex items-center justify-center mx-auto">
+              <Loader2 className="h-8 w-8 animate-spin text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">Loading...</h2>
+              <p className="text-sm text-muted-foreground">Authenticating your session</p>
+            </div>
+          </div>
         </div>
       </Route>
     );
