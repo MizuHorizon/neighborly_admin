@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ export default function AuthPage() {
   const { user, sendOtpMutation, verifyOtpMutation } = useAuth();
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const otpInputRef = useRef<HTMLInputElement>(null);
 
   // Redirect if already authenticated
   if (user) {
@@ -28,38 +29,43 @@ export default function AuthPage() {
     },
   });
 
-  const otpForm = useForm<OtpVerifyData>({
-    resolver: zodResolver(otpVerifySchema),
+  const otpForm = useForm<{ otp: string }>({
+    resolver: zodResolver(otpVerifySchema.pick({ otp: true })),
     defaultValues: {
-      phoneNumber: "",
       otp: "",
     },
   });
+
+  // Focus OTP input when step changes to OTP
+  useEffect(() => {
+    if (step === "otp" && otpInputRef.current) {
+      setTimeout(() => {
+        otpInputRef.current?.focus();
+      }, 100);
+    }
+  }, [step]);
 
   const handleSendOtp = (data: OtpSendData) => {
     setPhoneNumber(data.phoneNumber);
     sendOtpMutation.mutate(data, {
       onSuccess: () => {
-        // Reset the OTP form and set the phone number correctly
-        otpForm.reset({
-          phoneNumber: data.phoneNumber,
-          otp: "",
-        });
+        // Clear the OTP form completely
+        otpForm.reset({ otp: "" });
         setStep("otp");
       },
     });
   };
 
-  const handleVerifyOtp = (data: OtpVerifyData) => {
-    verifyOtpMutation.mutate(data);
+  const handleVerifyOtp = (data: { otp: string }) => {
+    verifyOtpMutation.mutate({
+      phoneNumber: phoneNumber,
+      otp: data.otp,
+    });
   };
 
   const handleBackToPhone = () => {
     setStep("phone");
-    otpForm.reset({
-      phoneNumber: "",
-      otp: "",
-    });
+    otpForm.reset({ otp: "" });
   };
 
   return (
@@ -132,6 +138,7 @@ export default function AuthPage() {
                           <FormControl>
                             <Input
                               {...field}
+                              ref={otpInputRef}
                               type="text"
                               inputMode="numeric"
                               pattern="[0-9]*"
@@ -139,7 +146,6 @@ export default function AuthPage() {
                               maxLength={6}
                               className="text-center text-2xl font-mono tracking-widest h-16 border-border bg-white"
                               data-testid="input-otp"
-                              autoFocus
                               onChange={(e) => {
                                 // Only allow numeric input
                                 const value = e.target.value.replace(/\D/g, '');
