@@ -32,8 +32,8 @@ async function makeRequest<T>(
 }
 
 export const api = {
-  getDriverApplications: (status: string = "pending") =>
-    makeRequest<ApiResponse<DriverApplication[]>>(`/driver-applications?status=${status}`),
+  getDriverApplications: (status?: string) =>
+    makeRequest<ApiResponse<DriverApplication[]>>(`/driver-applications${status ? `?status=${status}` : ""}`),
     
   approveApplication: (applicationId: string) =>
     makeRequest<ApiResponse<any>>(`/driver-applications/${applicationId}/approve`, {

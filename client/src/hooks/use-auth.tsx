@@ -105,6 +105,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: (response: ApiResponse<AuthResponse>) => {
       const { accessToken, refreshToken, user } = response.data;
       
+      // Check if user has admin role
+      if (user.role !== "admin") {
+        toast({
+          title: "Access Denied",
+          description: "You do not have permission to access the admin dashboard.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       setAccessToken(accessToken);

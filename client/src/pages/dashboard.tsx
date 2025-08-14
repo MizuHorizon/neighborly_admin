@@ -36,12 +36,12 @@ export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: applicationsResponse, isLoading, error } = useQuery({
-    queryKey: ["/api/driver-applications", "pending"],
-    queryFn: () => api.getDriverApplications("pending"),
+    queryKey: ["/api/driver-applications"],
+    queryFn: () => api.getDriverApplications(), // Remove status filter to get all applications
   });
 
   const refreshMutation = useMutation({
-    mutationFn: () => api.getDriverApplications("pending"),
+    mutationFn: () => api.getDriverApplications(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/driver-applications"] });
       toast({
@@ -60,10 +60,11 @@ export default function Dashboard() {
 
   const applications = applicationsResponse?.data || [];
 
+  // Calculate stats from all applications
   const stats = {
-    pending: applications.length,
-    approved: 0, // These would come from additional API calls in a real app
-    rejected: 0,
+    pending: applications.filter(app => app.status === 'pending').length,
+    approved: applications.filter(app => app.status === 'approved').length,
+    rejected: applications.filter(app => app.status === 'rejected').length,
     total: applications.length,
   };
 
@@ -296,7 +297,7 @@ export default function Dashboard() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleViewApplication(application)}
-                          className="h-8 px-3 text-foreground hover:bg-notion-gray opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="h-8 px-3 text-foreground hover:bg-notion-gray transition-colors"
                           data-testid={`button-view-${application.application_id}`}
                         >
                           <Eye className="h-4 w-4 mr-2" />
