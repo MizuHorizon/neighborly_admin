@@ -34,6 +34,8 @@ export interface User {
   isProfileComplete: boolean;
   role: string;
   lastLocation: string | null;
+  admin_verified: boolean; // Added field to check if admin is verified
+  status: string; // Added field for user status: pending, approved, or admin_verified
 }
 
 export interface Car {

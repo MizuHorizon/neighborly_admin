@@ -64,4 +64,13 @@ export const api = {
       },
       body: JSON.stringify({ reason }),
     }),
+
+  // Add refresh onboarding URL endpoint for Stripe Connect
+  refreshOnboardingUrl: (accountId: string) =>
+    makeRequest<ApiResponse<any>>(`/stripe/connect/${accountId}/refresh-onboarding`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }),
 };
