@@ -17,9 +17,16 @@ export const rejectApplicationSchema = z.object({
   reason: z.string().min(1, "Rejection reason is required"),
 });
 
+// Email/Password login schema for admin authentication
+export const emailPasswordLoginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
 export type OtpSendData = z.infer<typeof otpSendSchema>;
 export type OtpVerifyData = z.infer<typeof otpVerifySchema>;
 export type RejectApplicationData = z.infer<typeof rejectApplicationSchema>;
+export type EmailPasswordLoginData = z.infer<typeof emailPasswordLoginSchema>;
 
 export interface User {
   id: string;
@@ -96,5 +103,5 @@ export interface ApiResponse<T> {
 export interface AuthResponse {
   user: User;
   accessToken: string;
-  refreshToken: string;
+  refreshToken?: string; // Optional since admin login API doesn't return refreshToken
 }

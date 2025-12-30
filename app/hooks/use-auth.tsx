@@ -2,7 +2,7 @@
 
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useQuery, useMutation, UseMutationResult } from "@tanstack/react-query";
-import { User, OtpSendData, OtpVerifyData, ApiResponse, AuthResponse } from "@shared/schema";
+import { User, EmailPasswordLoginData, ApiResponse, AuthResponse } from "@shared/schema";
 import { queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -12,8 +12,7 @@ type AuthContextType = {
   isLoading: boolean;
   error: Error | null;
   accessToken: string | null;
-  sendOtpMutation: UseMutationResult<ApiResponse<{ message: string }>, Error, OtpSendData>;
-  verifyOtpMutation: UseMutationResult<ApiResponse<AuthResponse>, Error, OtpVerifyData>;
+  loginMutation: UseMutationResult<ApiResponse<AuthResponse>, Error, EmailPasswordLoginData>;
   logout: () => void;
 };
 
@@ -106,9 +105,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const sendOtpMutation = useMutation({
-    mutationFn: async (data: OtpSendData) => {
-      const response = await fetch("https://api.neighborly.live/api/auth/otp/send", {
+  const loginMutation = useMutation({
+    mutationFn: async (data: EmailPasswordLoginData) => {
+      const response = await fetch("https://api.neighborly.live/api/auth/admin/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -117,44 +116,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to send OTP");
-      }
-
-      return await response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "OTP Sent",
-        description: "Please check your phone for the verification code.",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Failed to send OTP",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const verifyOtpMutation = useMutation({
-    mutationFn: async (data: OtpVerifyData) => {
-      const response = await fetch("https://api.neighborly.live/api/auth/otp/verify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to verify OTP");
+        // Try to extract error message from response
+        let errorMessage = "Failed to login";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch (e) {
+          // If we can't parse the error, use default message
+        }
+        throw new Error(errorMessage);
       }
 
       return await response.json();
     },
     onSuccess: (response: ApiResponse<AuthResponse>) => {
-      const { accessToken, refreshToken, user } = response.data;
+      const { accessToken, user } = response.data;
+      const refreshToken = response.data.refreshToken; // Optional, may not be present
       
       // Check if user has admin role
       if (user.role !== "admin") {
@@ -166,10 +143,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       
+      // Store access token
       localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
       setAccessToken(accessToken);
       
+      // Store refresh token only if provided
+      if (refreshToken) {
+        localStorage.setItem("refreshToken", refreshToken);
+      }
+      
+      // Update query cache with user data
       queryClient.setQueryData(["/api/user"], user);
       
       toast({
@@ -181,7 +164,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onError: (error: Error) => {
       toast({
-        title: "Verification Failed",
+        title: "Login Failed",
         description: error.message,
         variant: "destructive",
       });
@@ -219,8 +202,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading: !isInitialized || isLoading,
         error,
         accessToken,
-        sendOtpMutation,
-        verifyOtpMutation,
+        loginMutation,
         logout,
       }}
     >
