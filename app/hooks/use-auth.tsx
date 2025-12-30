@@ -160,7 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "Welcome to the admin dashboard!",
       });
       
-      router.push("/");
+      router.replace("/");
     },
     onError: (error: Error) => {
       toast({
@@ -192,7 +192,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     
     // Navigate to auth page
-    router.push("/auth");
+    router.replace("/auth");
   };
 
   return (
